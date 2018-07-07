@@ -130,6 +130,9 @@ var Player = function(x, y, width, height) {
     }
 }
 
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
 
 function init() {
     console.log('Game started!')
@@ -162,5 +165,23 @@ function init() {
 
 
 function render() {
+    Game.clearScreen()
+    Game.setupBackground('#DBE0DE')
 
+    Player.render()
+    Ball.render()
+
+    for (var i = 0; i < bricksColumns; i++) {
+        for (var j = 0; j < bricksRows; j++) {
+            bricksField[i][j].render()
+        }
+    }
+
+    if ( (Ball.posX-Ball.radius > Player.posX && Ball.posX+Ball.radius < Player.posX+Player.width) &&
+         (Ball.posY+Ball.radius > Player.posY) ) {
+
+        Ball.dy = -Ball.dy
+    }
+
+    requestAnimationFrame(render)
 }
