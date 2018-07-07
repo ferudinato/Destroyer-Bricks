@@ -16,6 +16,36 @@ var Game = {
     }
 }
 
+var Ball = function(x, y, color) {
+    this.posX   = x
+    this.posY   = y
+    this.radius = 10
+
+    this.dx     = 3
+    this.dy     = 3
+
+    this.color  = color
+
+    this.draw   = function() {
+        Game.context.beginPath()
+        Game.context.fillStyle = this.color
+        Game.context.arc(this.posX, this.posY, this.radius, 0, Math.PI * 2, false)
+        Game.context.fill()
+    }
+
+    this.render = function() {
+        this.draw()
+
+        if (this.posX+this.radius > Game.canvas.width || this.posX-this.radius < 0)
+            this.dx = -this.dx
+
+        if (this.posY+this.radius > Game.canvas.height || this.posY-this.radius < 0)
+            this.dy = -this.dy
+
+        this.posX += this.dx
+        this.posY += this.dy
+    }
+}
 
 var Player = function(x, y, width, height) {
     this.posX   = x
@@ -78,4 +108,7 @@ function init() {
     Game.setup('game_area')
 
     Player = new Player(10, Game.canvas.height - 30, 120, 15)
+    Ball = new Ball(10, 10, '#07870E')
+
+
 }
