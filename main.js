@@ -110,5 +110,13 @@ function init() {
     Player = new Player(10, Game.canvas.height - 30, 120, 15)
     Ball = new Ball(10, 10, '#07870E')
 
+    document.addEventListener('keydown', (evt) => Player.move(evt, 'down'), false)
+    document.addEventListener('keyup', (evt) => Player.move(evt, 'up'), false)
 
+    render()
+}
+
+
+function render() {
+    
 }
