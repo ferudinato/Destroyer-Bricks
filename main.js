@@ -1,3 +1,10 @@
+var bricksField = []
+var bricksColumns = 6
+var bricksRows = 3
+
+const randomColors = [
+    '#0ACC16', '#FF0DCC', '#A1843F', '#42B4FF', '#000'
+]
 
 
 var Game = {
@@ -13,6 +20,28 @@ var Game = {
     },
     clearScreen: function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    }
+}
+
+var Brick = function(color) {
+    this.posX       = 0
+    this.posY       = 0
+    this.width      = 75
+    this.height     = 20
+
+    this.color      = color
+
+    this.offsetLeft     = 60
+    this.offsetTop      = 40
+    this.paddingRight   = 5
+
+    this.draw = function() {
+        Game.context.fillStyle = this.color
+        Game.context.fillRect(this.posX, this.posY, this.width, this.height)
+    }
+
+    this.render = function() {
+        this.draw()
     }
 }
 
@@ -110,6 +139,21 @@ function init() {
     Player = new Player(10, Game.canvas.height - 30, 120, 15)
     Ball = new Ball(10, 10, '#07870E')
 
+    for (var i = 0; i < bricksColumns; i++) {
+        bricksField[i] = []
+        for (var j = 0; j < bricksRows; j++) {
+            var br = new Brick( randomColors[getRandomInt(0, 4)] )
+
+            var brickX = (i * (br.width + br.paddingRight)) + br.offsetLeft
+            var brickY = (j * (br.height + br.paddingRight)) + br.offsetTop
+
+            br.posX = brickX
+            br.posY = brickY
+
+            bricksField[i][j] = br
+        }
+    }
+
     document.addEventListener('keydown', (evt) => Player.move(evt, 'down'), false)
     document.addEventListener('keyup', (evt) => Player.move(evt, 'up'), false)
 
@@ -118,5 +162,5 @@ function init() {
 
 
 function render() {
-    
+
 }
