@@ -95,6 +95,8 @@ var Player = function(x, y, width, height) {
     this.left   = false
     this.right  = false
 
+    this.score  = 0
+
     this.move   = function(evt, keyevent) {
         var keydown = evt.keyCode
 
@@ -113,6 +115,12 @@ var Player = function(x, y, width, height) {
         }
     }
 
+    this.drawScore = function() {
+        Game.context.font = '14px Arial'
+        Game.context.fillStyle = '#0095DD'
+        Game.context.fillText("Puntuacion: "+this.score, 8, 20)
+    }
+
     this.draw = function() {
         Game.context.fillStyle = 'black'
         Game.context.fillRect(this.posX, this.posY, this.width, this.height)
@@ -120,6 +128,7 @@ var Player = function(x, y, width, height) {
 
     this.render = function() {
         this.draw()
+        this.drawScore()
 
         //console.log('left side: '+this.posX+'  right side: '+(this.posX+this.width))
         if ( this.posX + this.width <= Game.canvas.width + 30 && this.posX >= -30 ) {
@@ -198,6 +207,7 @@ function render() {
 
                 Ball.dy = -Ball.dy
                 b.status = false
+                Player.score++
             }
         }
     }
