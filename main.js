@@ -76,8 +76,15 @@ var Ball = function(x, y, color) {
         if (this.posY-this.radius < 0)
             this.dy = -this.dy
         else if (this.posY+this.radius > Game.canvas.height) {
-            alert('Juego terminado!')
-            document.location.reload()
+            if (!Player.vidas) {
+                alert('Juego terminado!')
+                document.location.reload()
+            } else {
+                this.posX = Game.canvas.width / 2
+                this.posY = Game.canvas.height / 2
+                Player.vidas--
+            }
+
         }
 
         this.posX += this.dx
@@ -96,6 +103,7 @@ var Player = function(x, y, width, height) {
     this.right  = false
 
     this.score  = 0
+    this.vidas  = 3
 
     this.move   = function(evt, keyevent) {
         var keydown = evt.keyCode
@@ -121,6 +129,12 @@ var Player = function(x, y, width, height) {
         Game.context.fillText("Puntuacion: "+this.score, 8, 20)
     }
 
+    this.drawLives = function() {
+        Game.context.font = '14px Arial'
+        Game.context.fillStyle = '#0095DD'
+        Game.context.fillText("Vidas: "+this.vidas, Game.canvas.width - 60, 20)
+    }
+
     this.draw = function() {
         Game.context.fillStyle = 'black'
         Game.context.fillRect(this.posX, this.posY, this.width, this.height)
@@ -129,6 +143,7 @@ var Player = function(x, y, width, height) {
     this.render = function() {
         this.draw()
         this.drawScore()
+        this.drawLives()
 
         //console.log('left side: '+this.posX+'  right side: '+(this.posX+this.width))
         if ( this.posX + this.width <= Game.canvas.width + 30 && this.posX >= -30 ) {
