@@ -206,9 +206,16 @@ function render() {
                 Ball.posY > b.posY && Ball.posY < b.posY+b.height) {
 
                 Ball.dy = -Ball.dy
+                Ball.dx = -Ball.dx
                 b.status = false
                 Player.score++
             }
+
+            if (Player.score == bricksRows * bricksColumns) {
+                alert('Has ganado!')
+                document.location.reload()
+            }
+
         }
     }
 
