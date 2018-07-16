@@ -2,6 +2,10 @@ var bricksField = []
 var bricksColumns = 6
 var bricksRows = 3
 
+var playerPaddleWidth = 120
+var playerPaddleHeight = 15
+
+
 const randomColors = [
     '#0ACC16', '#FF0DCC', '#A1843F', '#42B4FF', '#000'
 ]
@@ -29,6 +33,7 @@ var Brick = function(color) {
     this.width      = 75
     this.height     = 20
 
+    this.status     = true
     this.color      = color
 
     this.offsetLeft     = 60
@@ -68,8 +73,12 @@ var Ball = function(x, y, color) {
         if (this.posX+this.radius > Game.canvas.width || this.posX-this.radius < 0)
             this.dx = -this.dx
 
-        if (this.posY+this.radius > Game.canvas.height || this.posY-this.radius < 0)
+        if (this.posY-this.radius < 0)
             this.dy = -this.dy
+        else if (this.posY+this.radius > Game.canvas.height) {
+            alert('Juego terminado!')
+            document.location.reload()
+        }
 
         this.posX += this.dx
         this.posY += this.dy
@@ -122,10 +131,10 @@ var Player = function(x, y, width, height) {
         }
 
         if (this.posX < -30)
-            this.posX = this.posX + 5
+            this.posX += 5
 
         if (this.posX+this.width > Game.canvas.width + 30)
-            this.posX = this.posX - 5
+            this.posX -= 5
 
     }
 }
@@ -139,20 +148,16 @@ function init() {
 
     Game.setup('game_area')
 
-    Player = new Player(10, Game.canvas.height - 30, 120, 15)
-    Ball = new Ball(10, 10, '#07870E')
+    Player = new Player((Game.canvas.width - playerPaddleWidth) / 2,
+                        Game.canvas.height - playerPaddleHeight,
+                        playerPaddleWidth, playerPaddleHeight)
+
+    Ball = new Ball(Game.canvas.width/2, Game.canvas.height/2, '#07870E')
 
     for (var i = 0; i < bricksColumns; i++) {
         bricksField[i] = []
         for (var j = 0; j < bricksRows; j++) {
             var br = new Brick( randomColors[getRandomInt(0, 4)] )
-
-            var brickX = (i * (br.width + br.paddingRight)) + br.offsetLeft
-            var brickY = (j * (br.height + br.paddingRight)) + br.offsetTop
-
-            br.posX = brickX
-            br.posY = brickY
-
             bricksField[i][j] = br
         }
     }
@@ -169,16 +174,36 @@ function render() {
     Game.setupBackground('#DBE0DE')
 
     Player.render()
+
+    for (var i = 0; i < bricksColumns; i++) {
+        for (var j = 0; j < bricksRows; j++) {
+            var brick = bricksField[i][j]
+            if (brick.status) {
+                var brickX = (i * (brick.width + brick.paddingRight)) + brick.offsetLeft
+                var brickY = (j * (brick.height + brick.paddingRight)) + brick.offsetTop
+                brick.posX = brickX
+                brick.posY = brickY
+                brick.render()
+            }
+        }
+    }
+
     Ball.render()
 
     for (var i = 0; i < bricksColumns; i++) {
         for (var j = 0; j < bricksRows; j++) {
-            bricksField[i][j].render()
+            var b = bricksField[i][j]
+            if (b.status && Ball.posX > b.posX && Ball.posX < b.posX+b.width &&
+                Ball.posY > b.posY && Ball.posY < b.posY+b.height) {
+
+                Ball.dy = -Ball.dy
+                b.status = false
+            }
         }
     }
 
-    if ( (Ball.posX-Ball.radius > Player.posX && Ball.posX+Ball.radius < Player.posX+Player.width) &&
-         (Ball.posY+Ball.radius > Player.posY) ) {
+    if ( (Ball.posX > Player.posX && Ball.posX < Player.posX+Player.width) &&
+         (Ball.posY > Player.posY && Ball.posY < Player.posY+Player.height) ) {
 
         Ball.dy = -Ball.dy
     }
